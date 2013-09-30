@@ -53,6 +53,16 @@ describe 'CLI' do
         expect(output_from test_command).to include 'Running: 1.0.0'
         expect(output_from test_command).to_not include 'Running: 1.1.0'
       end
+
+      it 'returns a correct exit status when the commmand fails' do
+        write_file 'test.rb', 'puts "Fail: #{$dummy_version}"; raise'
+        test_command = 'appraisal 1.0.0 ruby -rbundler/setup -rdummy test.rb'
+        run_simple test_command, false
+
+        expect(output_from test_command).to include 'Fail: 1.0.0'
+        expect(output_from test_command).to_not include 'Fail: 1.1.0'
+        expect(last_exit_status).to eq 1
+      end
     end
 
     context 'without appraisal name' do
@@ -62,6 +72,16 @@ describe 'CLI' do
 
         expect(output_from test_command).to include 'Running: 1.0.0'
         expect(output_from test_command).to include 'Running: 1.1.0'
+      end
+
+      it 'halts when a command return nonzero exit status' do
+        write_file 'test.rb', 'puts "Fail: #{$dummy_version}"; raise'
+        test_command = 'appraisal ruby -rbundler/setup -rdummy test.rb'
+        run_simple test_command, false
+
+        expect(output_from test_command).to include 'Fail: 1.0.0'
+        expect(output_from test_command).to_not include 'Fail: 1.1.0'
+        expect(last_exit_status).to eq 1
       end
     end
   end

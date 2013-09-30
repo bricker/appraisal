@@ -59,43 +59,6 @@ Feature: run a rake task through several appraisals
     When I successfully run `bundle install --local`
     And I successfully run `bundle exec rake appraisal:install --trace`
 
-  Scenario: run a specific task with one appraisal
-    When I successfully run `bundle exec rake appraisal:1.3.0 version --trace`
-    Then the output should contain "Loaded 1.3.0"
-
-  Scenario: run a specific task with all appraisals
-    When I successfully run `bundle exec rake appraisal version --trace`
-    Then the output should contain "Loaded 1.3.0"
-    And the output should contain "Loaded 1.3.2"
-    And the output should not contain "Invoke version"
-
-  Scenario: run the default task with one appraisal
-    When I successfully run `bundle exec rake appraisal:1.3.0 --trace`
-    Then the output should contain "Loaded 1.3.0"
-
-  Scenario: run the default task with all appraisals
-    When I successfully run `bundle exec rake appraisal --trace`
-    Then the output should contain "Loaded 1.3.0"
-    And the output should contain "Loaded 1.3.2"
-
-  Scenario: run a failing task with one appraisal
-    When I run `bundle exec rake appraisal:1.3.0 fail --trace`
-    Then the output should contain "Fail 1.3.0"
-    And the exit status should be 1
-
-  Scenario: run a failing task with all appraisals
-    When I run `bundle exec rake appraisal fail --trace`
-    Then the output should contain "Fail 1.3.2"
-    But the output should not contain "Fail 1.3.0"
-    And the exit status should be 1
-
-  Scenario: run a cleanup task
-    When I run `bundle exec rake appraisal:cleanup --trace`
-    Then a file named "gemfiles/1.3.0.gemfile" should not exist
-    And a file named "gemfiles/1.3.0.gemfile.lock" should not exist
-    And a file named "gemfiles/1.3.2.gemfile" should not exist
-    And a file named "gemfiles/1.3.2.gemfile.lock" should not exist
-
   Scenario: install gems within groups
     Then the file "gemfiles/1.3.0.gemfile" should contain:
       """
